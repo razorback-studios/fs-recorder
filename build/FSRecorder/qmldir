@@ -1,5 +1,0 @@
-module FSRecorder
-typeinfo appFSRecorder.qmltypes
-prefer :/FSRecorder/
-Main 1.0 Main.qml
-

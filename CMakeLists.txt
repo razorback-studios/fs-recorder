@@ -17,7 +17,10 @@ qt_add_executable(appFSRecorder
 qt_add_qml_module(appFSRecorder
     URI FSRecorder
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES Main.qml 
+    QML_FILES UI/HomeScreen.qml 
+    QML_FILES UI/RecordingIcon.qml
+    SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -33,6 +36,10 @@ set_target_properties(appFSRecorder PROPERTIES
 
 target_link_libraries(appFSRecorder
     PRIVATE Qt6::Quick
+)
+
+target_include_directories(appFSRecorder
+    PRIVATE Systems/Recording
 )
 
 include(GNUInstallDirs)

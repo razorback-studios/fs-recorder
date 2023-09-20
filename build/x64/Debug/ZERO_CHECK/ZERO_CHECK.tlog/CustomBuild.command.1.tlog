@@ -1,0 +1,10 @@
+^D:\PROJECTS\WHITEPICKETFENCE\FSRECORDER\FSRECORDER\BUILD\CMAKEFILES\FDBF6D2A68A3CB473B1BBB53BA15E0A7\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Projects/WhitePicketFence/FSRecorder/FSRecorder -BD:/Projects/WhitePicketFence/FSRecorder/FSRecorder/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Projects/WhitePicketFence/FSRecorder/FSRecorder/build/FSRecorder.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

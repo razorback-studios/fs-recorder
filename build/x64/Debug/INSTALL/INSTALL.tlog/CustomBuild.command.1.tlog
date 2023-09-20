@@ -1,0 +1,10 @@
+^D:\PROJECTS\WHITEPICKETFENCE\FSRECORDER\FSRECORDER\BUILD\CMAKEFILES\FDBF6D2A68A3CB473B1BBB53BA15E0A7\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

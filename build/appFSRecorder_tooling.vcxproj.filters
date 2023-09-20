@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Projects\WhitePicketFence\FSRecorder\FSRecorder\build\CMakeFiles\97f724e4b30799720095d3684bd45c7e\Main.qml.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Projects\WhitePicketFence\FSRecorder\FSRecorder\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Projects\WhitePicketFence\FSRecorder\FSRecorder\build\FSRecorder\Main.qml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3BD81F69-6C58-3B61-B873-7AE03132BD4D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

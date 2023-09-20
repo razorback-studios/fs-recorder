@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/FSRecorder">D:/Projects/WhitePicketFence/FSRecorder/FSRecorder/build/FSRecorder</file>
+
+  </qresource>
+</RCC>

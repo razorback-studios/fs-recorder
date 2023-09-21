@@ -6,7 +6,20 @@ Item {
     Image {
         id: playImage
         source: "qrc:/Assets/Vector.png"
-        height: 100
-        width: 100
+        height: 99
+        width: 88
+        anchors.centerIn: parent
     }   
+
+    Text {
+        id: playText
+        text: "PLAY"
+        color: "white"
+        font.pixelSize: 32
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: playImage.bottom
+            topMargin: 10
+        }
+    }
 }

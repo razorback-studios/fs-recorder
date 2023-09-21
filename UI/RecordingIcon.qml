@@ -2,7 +2,7 @@ import QtQuick 2.15
 
 Item {
     id: recordingIcon
-
+    
     //Outline Circle
     Rectangle {
         id: recordButtonOutline

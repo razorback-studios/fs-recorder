@@ -27,6 +27,8 @@ qt_add_qml_module(appFSRecorder
     QML_FILES UI/StopIcon.qml
     QML_FILES UI/Components/PauseButton.qml
     QML_FILES UI/Components/PlayButton.qml
+    QML_FILES UI/Components/StatusMessage.qml
+    QML_FILES UI/Components/FileMenu.qml
     SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
 )
 

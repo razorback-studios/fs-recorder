@@ -28,10 +28,13 @@ Item {
     }
 
     //Status Text
-    Text {
-        id: statusText
-        color: "red"
-        text: recordingController.status
+    StatusMessage {
+        id: statusMessageContainer
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: parent.top
+            topMargin: 40
+        }
     }
 
     //Pause / PlayButton
@@ -44,24 +47,22 @@ Item {
     //     }
     // }
 
-    // Image {
-    //     id: testImage
-    //     source: "qrc:/Assets/Vector.png"
-    //     height: 100
-    //     width: 100
-
-    //     anchors {
-    //         verticalCenter: parent.verticalCenter
-    //         left: recordingIconContainer.right
-    //         leftMargin: 120
-    //     }
-    // }
     PlayButton {
         id: playButtonContainer
         anchors {
             verticalCenter: parent.verticalCenter
             left: recordingIconContainer.right
-            leftMargin: 110
+            leftMargin: 150
+        }
+    }
+
+    //File Menu
+    FileMenu {
+        id: fileMenuContainer
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: statusMessageContainer.bottom
+            topMargin: 60
         }
     }
 }

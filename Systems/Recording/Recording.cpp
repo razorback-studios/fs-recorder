@@ -18,18 +18,16 @@ QString Recording::getStatus()
 
 void Recording::handleRecordStart()
 {
-    if(!m_isRecording)
-    {
-        m_isRecording = true;
-        m_status = "Recording...";
-        emit isRecordingChanged();
-        emit isStatusChanged();
+    if (m_isRecording) {
+         m_status = "Already Recording";
+         emit isStatusChanged();
+         return;
     }
-    else
-    {
-        m_status = "Already Recording";
-        emit isStatusChanged();
-    }
+    
+    m_isRecording = true;
+    m_status = "Recording...";
+    emit isRecordingChanged();
+    emit isStatusChanged();
 }
 
 void Recording::handleRecordStop()

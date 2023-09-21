@@ -65,4 +65,13 @@ Item {
             topMargin: 60
         }
     }
+    
+    SimConnectStatus {
+        id: simConnectStatusContainer
+        anchors {
+            verticalCenter: fileMenuContainer.verticalCenter
+            right: parent.right
+            rightMargin: 140
+        }
+    }
 }

@@ -29,6 +29,7 @@ qt_add_qml_module(appFSRecorder
     QML_FILES UI/Components/PlayButton.qml
     QML_FILES UI/Components/StatusMessage.qml
     QML_FILES UI/Components/FileMenu.qml
+    QML_FILES UI/Components/SimConnectStatus.qml
     SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
 )
 

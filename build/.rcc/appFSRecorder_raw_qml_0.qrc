@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/FSRecorder/">
-    <file alias="Main.qml">D:/Projects/WhitePicketFence/FSRecorder/FSRecorder/Main.qml</file>
-  </qresource>
-</RCC>
-

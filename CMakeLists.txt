@@ -4,20 +4,38 @@ project(FSRecorder VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC)
+
 set(CMAKE_PREFIX_PATH "C:\\Qt\\6.5.2\\msvc2019_64")
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup()
 
-qt_add_executable(appFSRecorder
-    main.cpp
+qt_add_executable(appFSRecorder 
+    main.cpp 
+    images.qrc
 )
 
 qt_add_qml_module(appFSRecorder
     URI FSRecorder
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES Main.qml 
+    QML_FILES UI/HomeScreen.qml 
+    QML_FILES UI/RecordingIcon.qml
+    QML_FILES UI/StopIcon.qml
+    QML_FILES UI/Components/PauseButton.qml
+    QML_FILES UI/Components/PlayButton.qml
+    QML_FILES UI/Components/StatusMessage.qml
+    QML_FILES UI/Components/FileMenu.qml
+    QML_FILES UI/Components/SimConnectStatus.qml
+    SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
+)
+
+qt_add_resources(appFSRecorder imageresources
+    FILES
+        Assets/Vector.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -33,6 +51,10 @@ set_target_properties(appFSRecorder PROPERTIES
 
 target_link_libraries(appFSRecorder
     PRIVATE Qt6::Quick
+)
+
+target_include_directories(appFSRecorder
+    PRIVATE Systems/Recording
 )
 
 include(GNUInstallDirs)

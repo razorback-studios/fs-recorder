@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import "./Components"
+
 Item {
     id: homeScreen
 
@@ -16,28 +18,50 @@ Item {
         anchors.centerIn: parent
     }
 
-    //Stop Button
-    Rectangle {
-        id: stopButton
-        width: 100
-        height: 100
-        color: "white"
+    StopIcon {
+        id: stopIconContainer
         anchors {
             verticalCenter: parent.verticalCenter
             right: recordingIconContainer.left
-            rightMargin: 100
+            rightMargin: 150
         }
     }
 
+    //Status Text
     Text {
-        id: stopText
-        text: "STOP"
-        color: "white"
-        font.pixelSize: 32
+        id: statusText
+        color: "red"
+        text: recordingController.status
+    }
+
+    //Pause / PlayButton
+    // PauseButton {
+    //     id: playButtonContainer
+    //     anchors {
+    //         verticalCenter: parent.verticalCenter
+    //         left: recordingIconContainer.right
+    //         leftMargin: 110
+    //     }
+    // }
+
+    // Image {
+    //     id: testImage
+    //     source: "qrc:/Assets/Vector.png"
+    //     height: 100
+    //     width: 100
+
+    //     anchors {
+    //         verticalCenter: parent.verticalCenter
+    //         left: recordingIconContainer.right
+    //         leftMargin: 120
+    //     }
+    // }
+    PlayButton {
+        id: playButtonContainer
         anchors {
-            horizontalCenter: stopButton.horizontalCenter
-            top: stopButton.bottom
-            topMargin: 10
+            verticalCenter: parent.verticalCenter
+            left: recordingIconContainer.right
+            leftMargin: 110
         }
     }
 }

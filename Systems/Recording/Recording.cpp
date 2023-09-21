@@ -3,7 +3,7 @@
 Recording::Recording(QObject *parent) : QObject(parent)
 {
     m_isRecording = false;
-    m_status = "Not recording.";
+    m_status = "Idle";
 }
 
 bool Recording::getIsRecording()
@@ -16,18 +16,34 @@ QString Recording::getStatus()
     return m_status;
 }
 
-void Recording::handleRecord()
+void Recording::handleRecordStart()
 {
     if(!m_isRecording)
     {
         m_isRecording = true;
         m_status = "Recording...";
         emit isRecordingChanged();
+        emit isStatusChanged();
     }
     else
     {
+        m_status = "Already Recording";
+        emit isStatusChanged();
+    }
+}
+
+void Recording::handleRecordStop()
+{
+    if(m_isRecording)
+    {
         m_isRecording = false;
-        m_status = "Not Recording.";
+        m_status = "Recording Complete.";
         emit isRecordingChanged();
+        emit isStatusChanged();
+    }
+    else
+    {
+        m_status = "No Recording in Progress.";
+        emit isStatusChanged();
     }
 }

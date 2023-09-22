@@ -11,4 +11,14 @@ class SimConnectWorker : public QObject
 
 public:
     explicit SimConnectWorker(QObject *parent = nullptr);
+    void attemptConnect();
+
+signals:
+    void Connected();
+    void ConnectionFailed();
+    void LogMessage(QString message);
+
+public slots:
+    void DoWork();
+
 };

@@ -4,7 +4,6 @@
 #include "Systems/Recording/Recording.hpp"
 #include "Systems/SimConnectClient/SimConnectWorker.hpp"
 
-
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -12,7 +11,7 @@ int main(int argc, char *argv[])
     //QML Register
     qmlRegisterType<Recording>("Razorback", 1, 0, "Recording");
     qmlRegisterType<SimConnectWorker>("Razorback", 1, 0, "SimConnectWorker");
-
+    
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:/FSRecorder/Main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,

@@ -16,6 +16,9 @@ public:
     std::string GetOutputMessage() { return m_outputMessage; };
     void SetOutputMessage(std::string outputMessage);
 
+    //Destructor
+    ~SimConnectManager();
+
 private:
     SimConnectManager();
     HANDLE handle;

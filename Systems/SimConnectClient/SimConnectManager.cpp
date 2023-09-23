@@ -11,6 +11,15 @@ SimConnectManager::SimConnectManager() : handle(NULL)
     m_outputMessage = "Not Connected.";
 }
 
+SimConnectManager::~SimConnectManager()
+{
+    if(handle != NULL)
+    {
+        SimConnect_Close(handle);
+        handle = NULL;
+    }
+}
+
 bool SimConnectManager::ConnectToSim()
 {
     //If the handle is still not NULL this means we have a valid connection.

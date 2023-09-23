@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "Systems/Recording/Recording.hpp"
+#include "Systems/SimConnectClient/SimConnectWorker.hpp"
 
 
 int main(int argc, char *argv[])
@@ -9,7 +10,8 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     //QML Register
-    qmlRegisterType<Recording>("RecordingController", 1, 0, "Recording");
+    qmlRegisterType<Recording>("Razorback", 1, 0, "Recording");
+    //qmlRegisterType<SimConnectWorker>("Razorback", 1, 0, "SimConnectWorker");
 
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:/FSRecorder/Main.qml"_qs);

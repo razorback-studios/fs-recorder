@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Window
-import RecordingController 1.0
+import Razorback 1.0
 
 Window {
     width: 950
@@ -11,6 +11,10 @@ Window {
     Recording {
         id: recordingController
     }
+
+    // SimConnectWorker {
+    //     id: simConnectController
+    // }
 
     Loader {
         id: mainLoader

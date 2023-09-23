@@ -5,7 +5,7 @@ Item {
 
     Text {
         id: connectedStatusText
-        text: "MSFS Status: "
+        text: "MSFS Status: "  //+ (simConnectController.connectionStatus ? "Connected" : "Not Connected")
         color: "white"
         font.pixelSize: 20
 

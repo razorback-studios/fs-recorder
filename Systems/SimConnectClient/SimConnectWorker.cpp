@@ -1,56 +1,44 @@
-// #include "SimConnectWorker.hpp"
-// #include <QDebug>
+#include "SimConnectWorker.hpp"
+#include "SimConnectManager.hpp"
 
-// //Singleton Pattern Instance
-// SimConnectWorker& SimConnectWorker::GetInstance()
-// {
-//     static SimConnectWorker instance;
-//     return instance;
-// }
+SimConnectWorker::SimConnectWorker(QObject *parent) : QObject(parent), m_connectionStatus(false)
+{
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &SimConnectWorker::onTimeout);
 
-// //Constructor
-// SimConnectWorker::SimConnectWorker() //: handle(NULL)
-// {
-//     //Inititalizes a new QTimer
-//     connectionTimer = new QTimer(this);
+    //Timer shoudl run 5 seconds
+    m_timer->start(5000);
+}
 
-//     //Connects so that every time the connectiontimer timesout, it calls the connection failed function
-//     connect(connectionTimer, &QTimer::timeout, this, &SimConnectWorker::onConnectionFailed);
+void SimConnectWorker::onTimeout()
+{
+    //Create the instance
+    SimConnectManager& manager = SimConnectManager::Instance();
+    
+//     //If it is connected
+    if(manager.ConnectToSim())
+    {
+        SetConnectionStatus(true);
+        // We can uncomment this if we want the timer to stop when a connection is found
+        //m_timer->stop();
 
-//     //Have timer run every 5 seconds
-//     connectionTimer->start(5000);
+        //Currently, once a conneciton is found we slow down how often we scan, so that if the game is closed or crashes, it can restart looking for a new connection.
+        m_timer->setInterval(20000);
+        
+    }
+    else
+    {
+        SetConnectionStatus(false);
+        //Reset the timer back to a 5 second interval
+        m_timer->setInterval(5000);
+    }
+}
 
-//     m_connectionStatus = false;
-// }
-
-// void SimConnectWorker::SetConnectionStatus(bool status)
-// {
-//     m_connectionStatus = status;
-// }
-
-// void SimConnectWorker::AttemptConnection()
-// {
-//     //Check if the HRESULT is Success
-//     if(SUCCEEDED(SimConnect_Open(&handle, "FSRecorder", NULL, 0, 0, 0)))
-//     {
-//         //Stop the timer
-//         connectionTimer->stop();
-
-//         //Set the new status
-//         SetConnectionStatus(true);
-
-//         emit Connected();
-//         emit ConnectionChanged();
-//         emit LogMessage("Connected To MSFS");
-//     } else
-//     {
-//         SetConnectionStatus(false);
-//         emit ConnectionFailed();
-//         emit LogMessage("Failed to connect.");
-//     }
-// }
-
-// void SimConnectWorker::onConnectionFailed()
-// {
-//     AttemptConnection();
-// }
+void SimConnectWorker::SetConnectionStatus(bool status)
+{
+    if(m_connectionStatus != status)
+    {
+        m_connectionStatus = status;
+        emit ConnectionChanged();
+    }
+}

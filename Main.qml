@@ -12,9 +12,9 @@ Window {
         id: recordingController
     }
 
-    // SimConnectWorker {
-    //     id: simConnectController
-    // }
+    SimConnectWorker {
+        id: simConnectController
+    }
 
     Loader {
         id: mainLoader

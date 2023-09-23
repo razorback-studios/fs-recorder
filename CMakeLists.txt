@@ -34,7 +34,7 @@ qt_add_qml_module(appFSRecorder
     QML_FILES UI/Components/SimConnectStatus.qml
     SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
     SOURCES Systems/SimConnectClient/SimConnectWorker.hpp Systems/SimConnectClient/SimConnectWorker.cpp
-    SOURCES Systems/SimConnectClient/SimConnectManager.hpp
+    SOURCES Systems/SimConnectClient/SimConnectManager.hpp Systems/SimConnectClient/SimConnectManager.cpp
 )
 
 qt_add_resources(appFSRecorder imageresources

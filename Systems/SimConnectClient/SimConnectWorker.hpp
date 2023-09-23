@@ -1,37 +1,29 @@
-// #pragma once
+#pragma once
 
-// #include <QObject>
-// #include <QTimer>
-// #include <Windows.h>
-// #include <SimConnect.h>
+#include <QObject>
+#include <QTimer>
+#include <Windows.h>
+#include <SimConnect.h>
 
 // //Singleton Class instance for the application to get the SimConnect Connection
-// class SimConnectWorker : public QObject
-// {
-//     Q_OBJECT 
-//     Q_PROPERTY(BOOL connectionStatus READ GetConnectionStatus WRITE SetConnectionStatus NOTIFY ConnectionChanged)
+class SimConnectWorker : public QObject
+{
+    Q_OBJECT 
+    Q_PROPERTY(BOOL connectionStatus READ GetConnectionStatus WRITE SetConnectionStatus NOTIFY ConnectionChanged)
 
-// public:
-//     static SimConnectWorker& GetInstance();
-//     HANDLE getHandle() const { return handle; };
-//     void SetConnectionStatus(bool status);
-//     bool GetConnectionStatus() { return m_connectionStatus; };
+public:
+    explicit SimConnectWorker(QObject *parent = nullptr);
+    void SetConnectionStatus(bool status);
+    bool GetConnectionStatus() const { return m_connectionStatus; };
 
-// private:
-//     SimConnectWorker();
-//     HANDLE handle;
-//     QTimer *connectionTimer;
-//     bool m_connectionStatus;
+private:
+    QTimer* m_timer;
+    bool m_connectionStatus;
 
-//     void AttemptConnection();
+signals:
+    void ConnectionChanged();
 
-// signals:
-//     void Connected();
-//     void ConnectionFailed();
-//     void ConnectionChanged();
-//     void LogMessage(QString message);
+private slots:
+    void onTimeout();
 
-// private slots:
-//     void onConnectionFailed();
-
-// };
+};

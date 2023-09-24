@@ -38,6 +38,11 @@ qt_add_resources(appFSRecorder imageresources
         Assets/Vector.png
 )
 
+# add_library(FSRecorder_AudioAPI STATIC)
+
+add_executable(FSRecorder_AudioAPI_Testing Audio/AudioTestProgram.cpp)
+# target_link_libraries(FSRecorder_AudioAPI_Testing FSRecorder_AudioAPI)
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.

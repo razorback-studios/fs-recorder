@@ -1,38 +1,46 @@
 #pragma once
 
-#include <QObject>
-#include <QTimer>
-#include <Windows.h>
+#include "SimConnectManager.hpp"
 #include <SimConnect.h>
 
-// //Singleton Class instance for the application to get the SimConnect Connection
-class SimConnectWorker : public QObject
-{
-    Q_OBJECT 
-    Q_PROPERTY(BOOL connectionStatus READ GetConnectionStatus WRITE SetConnectionStatus NOTIFY ConnectionChanged)
-    Q_PROPERTY(QString statusMessage READ GetStatusMessage WRITE SetStatusMessage NOTIFY StatusChanged)
+#include <Windows.h>
+#include <iostream>
+#include <tchar.h>
+#include <stdio.h>
+#include <strsafe.h>
+#include <fstream>
 
+struct dataTypes
+{
+    char title[256];
+    double  altitude;
+};
+
+static enum DATA_DEFINE_ID
+{
+    DEFINITION_1,
+};
+
+static enum DATA_REQUEST_ID
+{
+    REQUEST_1,
+    REQUEST_2,
+};
+
+class SimConnectWorker
+{
 public:
-    explicit SimConnectWorker(QObject *parent = nullptr);
-    void SetConnectionStatus(bool status);
-    bool GetConnectionStatus() const { return m_connectionStatus; };
-    QString GetStatusMessage() const { return m_statusMessage; };
-    void SetStatusMessage(QString statusMessage);
+    SimConnectWorker();
+    ~SimConnectWorker();
+    void dataRequest();
+    void LogData(std::string data);
+    int GetQuit() { return quit; }
+    void SetQuit(int value) { quit = value; }
+    void isConnectedToSim();
 
 private:
-    QTimer* m_timer;
-    QString m_statusMessage;
-    bool m_connectionStatus;
-
-    void GatherData();
-
-signals:
-    void ConnectionChanged();
-    void ConnectedSuccessfully();
-    void ConnectionInvalid();
-    void StatusChanged();
-
-private slots:
-    void onTimeout();
+    std::ofstream m_file;
+    bool isConnected;
+    int quit = 0;
 
 };

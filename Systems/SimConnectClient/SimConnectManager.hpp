@@ -5,6 +5,7 @@
 #include <SimConnect.h>
 #include <string>
 
+
 //Singleton for SimConnect to pass the handler arround with only one instance running
 class SimConnectManager
 {

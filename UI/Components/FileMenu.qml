@@ -19,7 +19,7 @@ Item {
         Text {
             id: leftBlockText
             color: "white"
-            text: "Settings"
+            text: "Save File"
             font.pixelSize: 20
             anchors {
                 verticalCenter: parent.verticalCenter

@@ -1,13 +1,11 @@
 #pragma once
 
 #include "SimConnectManager.hpp"
+#include "../Logger/Logger.hpp"
 #include <SimConnect.h>
 #include <chrono>
 #include <Windows.h>
 #include <iostream>
-#include <tchar.h>
-#include <stdio.h>
-#include <strsafe.h>
 #include <fstream>
 
 struct dataTypes
@@ -42,7 +40,6 @@ public:
     SimConnectWorker();
     ~SimConnectWorker();
     void dataRequest();
-    void LogData(std::string data);
     int GetQuit() { return quit; }
     void WriteToCSV(std::string data);
     void SetQuit(int value) { quit = value; }
@@ -53,5 +50,4 @@ private:
     bool isConnected;
     int quit = 0;
     std::ofstream m_csv;
-
 };

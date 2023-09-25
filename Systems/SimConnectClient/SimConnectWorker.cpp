@@ -3,8 +3,8 @@
 
 SimConnectWorker::SimConnectWorker()
 {
-    //Set file to empty
-    m_file.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.txt", std::ios_base::trunc);
+    //Instance of logger
+    Logger& logger = Logger::Instance();
 
     m_csv.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.csv", std::ios_base::trunc);
     if(m_csv.is_open())
@@ -13,25 +13,20 @@ SimConnectWorker::SimConnectWorker()
     }
     else
     {
-        LogData("Failed to open CSV");
+        logger.Log("Failed to open CSV");
     }
 
-    LogData("SimConnectWorker Created");
+    logger.Log("SimConnectWorker Created");
 }
 
 SimConnectWorker::~SimConnectWorker()
 {
-    LogData("SimConnectWorker Destroyed");
-    m_file.close();
-    m_csv.close();
-}
+    //Log Close
+    Logger& logger = Logger::Instance();
+    logger.Log("SimConnectWorker Destroyed");
 
-void SimConnectWorker::LogData(std::string data)
-{
-    //Log with timestamp using
-    std::time_t t = std::time(0);
-    std::tm* now = std::localtime(&t);
-    m_file << now->tm_hour << ":" << now->tm_min << ":" << now->tm_sec << " - " << data << std::endl;
+    //Close CSV
+    m_csv.close();
 }
 
 void SimConnectWorker::WriteToCSV(std::string data)
@@ -101,10 +96,13 @@ void SimConnectWorker::dataRequest()
     //Check that we are connected to msfs
     SimConnectManager& manager = SimConnectManager::Instance();
 
+    //Logger
+    Logger& logger = Logger::Instance();
+
 
     if(manager.ConnectToSim())
     {
-        LogData("Connected to MSFS");
+        logger.Log("Connected to MSFS");
 
         //Request Data
         hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "TITLE", NULL, SIMCONNECT_DATATYPE_STRING256);
@@ -121,7 +119,7 @@ void SimConnectWorker::dataRequest()
         //Request Data
         if(FAILED(hr))
         {
-            LogData("Failed to Request Data");
+            logger.Log("Failed to Request Data");
         }
 
         start = std::chrono::high_resolution_clock::now();
@@ -133,7 +131,7 @@ void SimConnectWorker::dataRequest()
             
             if(manager.GetHandle() == NULL)
             {
-                LogData("Handle is NULL");
+                logger.Log("Handle is NULL");
             }
 
 
@@ -142,5 +140,9 @@ void SimConnectWorker::dataRequest()
         }
 
         return;
+    }
+    else
+    {
+        logger.Log("Failed to Connect to MSFS");
     }
 }

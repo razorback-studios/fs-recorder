@@ -14,7 +14,7 @@ Item {
 
     Rectangle {
         id: statusCircle
-        color: simConnectController.connectionStatus ? "green" : "red"
+        color: simConnectController.isConnected ? "green" : "red"
         height: 30
         width: 30
         radius: width/2

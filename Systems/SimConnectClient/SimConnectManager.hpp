@@ -22,6 +22,8 @@ public:
 
 private:
     SimConnectManager();
+    SimConnectManager(const SimConnectManager&) = delete;
+    SimConnectManager& operator=(const SimConnectManager&) = delete;
     HANDLE handle;
     std::string m_outputMessage;
 };

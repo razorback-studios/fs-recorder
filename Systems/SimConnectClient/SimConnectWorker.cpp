@@ -5,7 +5,16 @@ SimConnectWorker::SimConnectWorker()
 {
     //Set file to empty
     m_file.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.txt", std::ios_base::trunc);
-    m_file.close();
+
+    m_csv.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.csv", std::ios_base::trunc);
+    if(m_csv.is_open())
+    {
+        m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
+    }
+    else
+    {
+        LogData("Failed to open CSV");
+    }
 
     LogData("SimConnectWorker Created");
 }
@@ -13,24 +22,27 @@ SimConnectWorker::SimConnectWorker()
 SimConnectWorker::~SimConnectWorker()
 {
     LogData("SimConnectWorker Destroyed");
+    m_file.close();
+    m_csv.close();
 }
 
 void SimConnectWorker::LogData(std::string data)
 {
-    m_file.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.txt", std::ios_base::app);
     //Log with timestamp using
     std::time_t t = std::time(0);
     std::tm* now = std::localtime(&t);
     m_file << now->tm_hour << ":" << now->tm_min << ":" << now->tm_sec << " - " << data << std::endl;
-    m_file.close();
+}
+
+void SimConnectWorker::WriteToCSV(std::string data)
+{
+    m_csv << data << std::endl;
 }
 
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
     SimConnectWorker *worker = reinterpret_cast<SimConnectWorker*>(pContext);
     HRESULT hr;
-
-    worker->LogData("Data Received");
 
     switch (pData->dwID)
     {
@@ -43,9 +55,30 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                 case REQUEST_1:
                 {
                     dataTypes* ps = (dataTypes*)&pObjData->dwData;
-                    worker->LogData("Title: " + std::string(ps->title));
-                    worker->LogData("Altitude: " + std::to_string(ps->altitude));
+                    //Log Time with Chrono High Res Clock
+                    //Set var to hold time
+                    auto current = std::chrono::high_resolution_clock::now();
+                    auto count = std::chrono::duration_cast<std::chrono::microseconds>(current - worker->start).count();
+                    // worker->LogData("--------------------------------------------------");
+                    // worker->LogData("Time: " + std::to_string(count));
+                    // worker->LogData("Title: " + std::string(ps->title));
+                    // worker->LogData("Altitude: " + std::to_string(ps->altitude));
+                    // worker->LogData("Latitude: " + std::to_string(ps->latitude));
+                    // worker->LogData("Longitude: " + std::to_string(ps->longitude));
+                    // worker->LogData("Pitch: " + std::to_string(ps->pitch));
+                    // worker->LogData("Bank: " + std::to_string(ps->bank));
+                    // worker->LogData("Heading: " + std::to_string(ps->heading));
+                    // worker->LogData("Velocity Z: " + std::to_string(ps->velocityZ));
+                    // worker->LogData("Velocity Y: " + std::to_string(ps->velocityY));
+                    // worker->LogData("Velocity X: " + std::to_string(ps->velocityX));
+                    // worker->LogData("--------------------------------------------------");
+
+                    //Log to csv
+                    worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
+
                     break;
+
+                    worker->start = std::chrono::high_resolution_clock::now();
                 }
             }
             break;
@@ -75,26 +108,28 @@ void SimConnectWorker::dataRequest()
 
         //Request Data
         hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "TITLE", NULL, SIMCONNECT_DATATYPE_STRING256);
-        if(FAILED(hr))
-        {
-            LogData("Failed to Add to Data Definition");
-        }
-
-        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE ALTITUDE", "feet");
-        if(FAILED(hr))
-        {
-            LogData("Failed to Add to Data Definition");
-        }
-
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE ALTITUDE", "feet", SIMCONNECT_DATATYPE_FLOAT64);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE LATITUDE", "degrees", SIMCONNECT_DATATYPE_FLOAT64);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE LONGITUDE", "degrees", SIMCONNECT_DATATYPE_FLOAT64);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE BANK DEGREES", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "PLANE HEADING DEGREES TRUE", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "VELOCITY BODY Z", "feet per second", SIMCONNECT_DATATYPE_FLOAT32);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "VELOCITY BODY Y", "feet per second", SIMCONNECT_DATATYPE_FLOAT32);
+        hr = SimConnect_AddToDataDefinition(manager.GetHandle(), DEFINITION_1, "VELOCITY BODY X", "feet per second", SIMCONNECT_DATATYPE_FLOAT32);
+        
         //Request Data
-        hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_SECOND, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         if(FAILED(hr))
         {
             LogData("Failed to Request Data");
         }
 
+        start = std::chrono::high_resolution_clock::now();
+
         while (quit == 0)
         {
+            hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_ONCE, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+
             
             if(manager.GetHandle() == NULL)
             {
@@ -109,51 +144,3 @@ void SimConnectWorker::dataRequest()
         return;
     }
 }
-
-// void SimConnectWorker::dataRequest()
-// {
-//     LogData("Data Requested");
-
-//     //Create the instance
-//     SimConnectManager& manager = SimConnectManager::Instance();
-
-//     SetHandle(manager.GetHandle());
-    
-//     //Log Conneciton Status
-//     if(!manager.ConnectToSim())
-//     {
-//         LogData("Failed to Connect to MSFS");
-//         dataRequest();
-//     }
-
-//     HRESULT hr;
-
-//     if(SUCCEEDED(manager.ConnectToSim()))
-//     {
-//         LogData("Connected to MSFS");
-
-//         //Setup Data Definition
-//         hr = SimConnect_AddToDataDefinition(m_handle, AIRCRAFT_DATA, "Title", NULL, SIMCONNECT_DATATYPE_STRING256);
-//         hr = SimConnect_AddToDataDefinition(m_handle, AIRCRAFT_DATA, "Plane Altitude", "feet");
-
-//         hr = SimConnect_SubscribeToSystemEvent(m_handle, EVENT_SIM_START, "SimStart");
-//         if(FAILED(hr))
-//         {
-//             LogData("Failed to Subscribe to SimStart");
-
-//             //Try again
-//             dataRequest();
-
-//         } else {
-//             LogData("Subscribed to SimStart");
-//         }
-
-//         LogData("Launch Flight");
-
-//         while (0 == quit)
-//         {
-//             SimConnect_CallDispatch(m_handle, ProcessData, this);
-//             Sleep(1000);
-//         };
-//     }
-//}

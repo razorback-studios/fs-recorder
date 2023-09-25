@@ -53,5 +53,7 @@ void SimConnectBridge::TryConnection()
 
 void SimConnectBridge::StartRecording()
 {
+    Logger& logger = Logger::Instance();
+    logger.Log("Recording proccess begun.");
 
 }

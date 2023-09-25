@@ -17,7 +17,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                recordingController.handleRecordStart()
+                simConnectController.StartRecording()
             }
         }
     }
@@ -34,7 +34,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                recordingController.handleRecordStart()
+                simConnectController.StartRecording()
             }
         }
     }

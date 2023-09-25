@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(FSRecorder VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -38,10 +39,13 @@ qt_add_resources(appFSRecorder imageresources
         Assets/Vector.png
 )
 
-# add_library(FSRecorder_AudioAPI STATIC)
+add_library(FSRecorder_AudioAPI STATIC
+    Audio/CaptureSession.cpp
+    Audio/AudioDevice.cpp
+)
 
 add_executable(FSRecorder_AudioAPI_Testing Audio/AudioTestProgram.cpp)
-# target_link_libraries(FSRecorder_AudioAPI_Testing FSRecorder_AudioAPI)
+target_link_libraries(FSRecorder_AudioAPI_Testing FSRecorder_AudioAPI)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

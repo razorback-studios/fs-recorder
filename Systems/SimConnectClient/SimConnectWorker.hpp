@@ -10,6 +10,7 @@
 #include <thread>
 #include <cstdio>
 #include <filesystem>
+#include <mutex>
 
 struct dataTypes
 {
@@ -50,6 +51,7 @@ public:
 
     //Save CSV funciton, that gets the file and location
     bool SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName);
+    std::mutex csv_mtx;
 
 private:
     std::ofstream m_file;

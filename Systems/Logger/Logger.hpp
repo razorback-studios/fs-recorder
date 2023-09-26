@@ -3,12 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <mutex>
 
 class Logger
 {
 public:
     static Logger& Instance();
     void Log(std::string message);
+    std::mutex mtx;
 
     ~Logger();
 

@@ -34,6 +34,7 @@ SimConnectWorker::~SimConnectWorker()
 
 void SimConnectWorker::WriteToCSV(std::string data)
 {
+    std::lock_guard<std::mutex> lock(csv_mtx);
     m_csv << data << std::endl;
 }
 

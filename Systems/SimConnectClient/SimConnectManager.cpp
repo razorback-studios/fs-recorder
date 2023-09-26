@@ -22,14 +22,6 @@ SimConnectManager::~SimConnectManager()
 
 bool SimConnectManager::ConnectToSim()
 {
-    //If the handle is still not NULL this means we have a valid connection.
-    //This also needs to be uncommented if we decide to stop the timer
-    // if (handle != NULL)
-    // {
-    //     //Exit the function
-    //     return true;
-    // }
-
     //Attempt a connection to MSFS
     if(SUCCEEDED(SimConnect_Open(&handle, "FSRecorder", NULL, 0, 0, 0)))
     {

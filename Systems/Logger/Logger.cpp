@@ -8,7 +8,7 @@ Logger& Logger::Instance()
 
 Logger::Logger()
 {
-    m_file.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\Log.txt", std::ios_base::trunc);
+    m_file.open("Log.txt", std::ios_base::trunc);
 }
 
 Logger::~Logger()

@@ -6,7 +6,7 @@ SimConnectWorker::SimConnectWorker()
     //Instance of logger
     Logger& logger = Logger::Instance();
 
-    m_csv.open("D:\\Projects\\WhitePicketFence\\FSRecorder\\FSRecorder\\build\\Debug\\SimConnectWorker.csv", std::ios_base::trunc);
+    m_csv.open("SimConnectWorker.csv", std::ios_base::trunc);
     if(m_csv.is_open())
     {
         m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
@@ -54,19 +54,6 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                     //Set var to hold time
                     auto current = std::chrono::high_resolution_clock::now();
                     auto count = std::chrono::duration_cast<std::chrono::microseconds>(current - worker->start).count();
-                    // worker->LogData("--------------------------------------------------");
-                    // worker->LogData("Time: " + std::to_string(count));
-                    // worker->LogData("Title: " + std::string(ps->title));
-                    // worker->LogData("Altitude: " + std::to_string(ps->altitude));
-                    // worker->LogData("Latitude: " + std::to_string(ps->latitude));
-                    // worker->LogData("Longitude: " + std::to_string(ps->longitude));
-                    // worker->LogData("Pitch: " + std::to_string(ps->pitch));
-                    // worker->LogData("Bank: " + std::to_string(ps->bank));
-                    // worker->LogData("Heading: " + std::to_string(ps->heading));
-                    // worker->LogData("Velocity Z: " + std::to_string(ps->velocityZ));
-                    // worker->LogData("Velocity Y: " + std::to_string(ps->velocityY));
-                    // worker->LogData("Velocity X: " + std::to_string(ps->velocityX));
-                    // worker->LogData("--------------------------------------------------");
 
                     //Log to csv
                     worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
@@ -124,7 +111,7 @@ void SimConnectWorker::dataRequest()
 
         start = std::chrono::high_resolution_clock::now();
 
-        while (quit == 0)
+        while (!m_quit)
         {
             hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_ONCE, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 
@@ -136,7 +123,8 @@ void SimConnectWorker::dataRequest()
 
 
             SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, this);
-            Sleep(500);
+            //Sleep(500);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
         return;

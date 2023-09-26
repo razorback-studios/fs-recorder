@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 struct dataTypes
 {
@@ -42,7 +43,7 @@ public:
     void dataRequest();
     int GetQuit() { return quit; }
     void WriteToCSV(std::string data);
-    void SetQuit(int value) { quit = value; }
+    void SetQuit(bool value) { m_quit = value; }
     std::chrono::high_resolution_clock::time_point start;
 
 private:
@@ -50,4 +51,5 @@ private:
     bool isConnected;
     int quit = 0;
     std::ofstream m_csv;
+    std::atomic<bool> m_quit{ false };
 };

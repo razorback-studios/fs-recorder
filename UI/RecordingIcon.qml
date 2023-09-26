@@ -11,13 +11,13 @@ Item {
         height: 100
         radius: width / 2
         color: "#1A1919"
-        border.color: "red"
+        border.color: simConnectController.isRecording ? "#7d0f0f" : "red"
         border.width: 3
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                simConnectController.StartRecording()
+                simConnectController.isRecording ? simConnectController.StopRecording() : simConnectController.StartRecording()
             }
         }
     }
@@ -29,12 +29,12 @@ Item {
         width: 78
         height: 78
         radius: width / 2
-        color: "red"
+        color: simConnectController.isRecording ? "#7d0f0f" : "red"
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                simConnectController.StartRecording()
+                simConnectController.isRecording ? simConnectController.StopRecording() : simConnectController.StartRecording()
             }
         }
     }

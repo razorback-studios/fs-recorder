@@ -6,7 +6,7 @@ SimConnectWorker::SimConnectWorker()
     //Instance of logger
     Logger& logger = Logger::Instance();
 
-    m_csv.open("SimConnectWorker.csv", std::ios_base::trunc);
+    m_csv.open("tmp.csv", std::ios_base::trunc);
     if(m_csv.is_open())
     {
         m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
@@ -27,6 +27,9 @@ SimConnectWorker::~SimConnectWorker()
 
     //Close CSV
     m_csv.close();
+
+    //Remove the temp file
+    std::remove("tmp.csv");
 }
 
 void SimConnectWorker::WriteToCSV(std::string data)
@@ -34,9 +37,48 @@ void SimConnectWorker::WriteToCSV(std::string data)
     m_csv << data << std::endl;
 }
 
+bool SimConnectWorker::SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName)
+{
+    std::filesystem::path destPath(destFolder);
+    destPath /= fileName;
+
+    //Open tmp file
+    std::ifstream tmp(tmpFile, std::ios::binary);
+    if(!tmp.is_open())
+    {
+        Logger& logger = Logger::Instance();
+        logger.Log("Failed to open tmp file");
+        return false;
+    }
+
+    //Open destination file
+    std::ofstream dest(destPath, std::ios::binary);
+    if(!dest.is_open())
+    {
+        Logger& logger = Logger::Instance();
+        logger.Log("Failed to open destination file");
+        return false;
+    }
+
+    //Copy tmp file to destination file
+    dest << tmp.rdbuf();
+
+    //Check for error
+    if(!dest.good() || !tmp.good())
+    {
+        Logger& logger = Logger::Instance();
+        logger.Log("Failed to copy tmp file to destination file");
+        return false;
+    }
+
+    return true;
+
+}
+
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
     SimConnectWorker *worker = reinterpret_cast<SimConnectWorker*>(pContext);
+    
     HRESULT hr;
 
     switch (pData->dwID)

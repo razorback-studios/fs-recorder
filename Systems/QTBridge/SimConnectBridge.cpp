@@ -104,3 +104,26 @@ void SimConnectBridge::StopRecording()
         logger.Log("Not Connected to MSFS");
     }
 }
+
+void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile, const QString& fileName)
+{
+    Logger& logger = Logger::Instance();
+    logger.Log("SaveCSV Called");
+
+    std::string destFolderStr = destFolder.toStdString();
+    std::string tmpFileStr = tmpFile.toStdString();
+    std::string fileNameStr = fileName.toStdString();
+
+    logger.Log("destFolder: " + destFolderStr);
+    logger.Log("tmpFile: " + tmpFileStr);
+    logger.Log("fileName: " + fileNameStr);
+
+    if(m_worker->SaveCSV(destFolderStr, tmpFileStr, fileNameStr))
+    {
+        logger.Log("CSV Saved");
+    }
+    else
+    {
+        logger.Log("CSV Failed to Save");
+    }
+}

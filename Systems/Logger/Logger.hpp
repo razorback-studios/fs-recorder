@@ -16,6 +16,7 @@ private:
     Logger();
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
+    
     std::ofstream m_file;
 
 };

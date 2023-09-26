@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <cstdio>
+#include <filesystem>
 
 struct dataTypes
 {
@@ -45,6 +47,9 @@ public:
     void WriteToCSV(std::string data);
     void SetQuit(bool value) { m_quit = value; }
     std::chrono::high_resolution_clock::time_point start;
+
+    //Save CSV funciton, that gets the file and location
+    bool SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName);
 
 private:
     std::ofstream m_file;

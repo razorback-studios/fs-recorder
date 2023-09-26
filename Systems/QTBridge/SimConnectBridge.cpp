@@ -11,7 +11,9 @@ SimConnectBridge::SimConnectBridge(QObject *parent) : QObject(parent)
     if(m_worker == nullptr)
     {
         //Create new instance of that worker
-        m_worker = new SimConnectWorker();
+        
+        m_worker = std::make_shared<SimConnectWorker>();
+        m_worker->SetSelf(m_worker);
         logger.Log("Instance of Worker created");
     }
     else {
@@ -29,9 +31,6 @@ SimConnectBridge::~SimConnectBridge()
 {
     Logger& logger = Logger::Instance();
     logger.Log("SimConnectBridge Destroyed");
-
-    delete m_worker;
-    m_worker = nullptr;
 
     delete m_timer;
     m_timer = nullptr;

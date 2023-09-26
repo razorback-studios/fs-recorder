@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <mutex>
+#include <memory>
 
 struct dataTypes
 {
@@ -44,9 +45,10 @@ public:
     SimConnectWorker();
     ~SimConnectWorker();
     void dataRequest();
-    int GetQuit() { return quit; }
+    int GetQuit() { return m_quit; }
     void WriteToCSV(std::string data);
     void SetQuit(bool value) { m_quit = value; }
+    void SetSelf(std::weak_ptr<SimConnectWorker> self) { m_self = self; }
     std::chrono::high_resolution_clock::time_point start;
 
     //Save CSV funciton, that gets the file and location
@@ -56,7 +58,7 @@ public:
 private:
     std::ofstream m_file;
     bool isConnected;
-    int quit = 0;
     std::ofstream m_csv;
     std::atomic<bool> m_quit{ false };
+    std::weak_ptr<SimConnectWorker> m_self;
 };

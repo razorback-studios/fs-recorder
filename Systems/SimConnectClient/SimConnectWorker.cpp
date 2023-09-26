@@ -78,7 +78,7 @@ bool SimConnectWorker::SaveCSV(const std::string& destFolder, const std::string&
 
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
-    SimConnectWorker *worker = reinterpret_cast<SimConnectWorker*>(pContext);
+    std::shared_ptr<SimConnectWorker> worker = reinterpret_cast<std::weak_ptr<SimConnectWorker>*>(pContext)->lock();
     
     HRESULT hr;
 
@@ -165,8 +165,8 @@ void SimConnectWorker::dataRequest()
             }
 
 
-            SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, this);
-            //Sleep(500);
+            SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, &m_self);
+
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 

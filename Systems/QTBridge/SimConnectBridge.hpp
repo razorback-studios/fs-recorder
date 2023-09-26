@@ -35,7 +35,7 @@ signals:
 private:
     bool m_isConnected;
     bool m_isRecording;
-    SimConnectWorker* m_worker = nullptr;
+    std::shared_ptr<SimConnectWorker> m_worker;
     std::thread m_workerThread;
     QTimer* m_timer;
 };

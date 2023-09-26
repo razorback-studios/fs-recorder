@@ -16,10 +16,17 @@ Item {
             rightMargin: 40
         }
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                simConnectController.SaveCSV("C:\\Users\\w_can\\OneDrive\\Desktop\\Test", "tmp.csv", "test.csv");
+            }
+        }
+
         Text {
             id: leftBlockText
             color: "white"
-            text: "Settings"
+            text: "Save File"
             font.pixelSize: 20
             anchors {
                 verticalCenter: parent.verticalCenter

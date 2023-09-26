@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+set(SIMCONNECT_PATH "" CACHE STRING "Location of the SimConnect API root folder")
+
 project(FSRecorder VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,6 +33,10 @@ qt_add_qml_module(appFSRecorder
     QML_FILES UI/Components/FileMenu.qml
     QML_FILES UI/Components/SimConnectStatus.qml
     SOURCES Systems/Recording/Recording.hpp Systems/Recording/Recording.cpp
+    SOURCES Systems/SimConnectClient/SimConnectWorker.hpp Systems/SimConnectClient/SimConnectWorker.cpp
+    SOURCES Systems/SimConnectClient/SimConnectManager.hpp Systems/SimConnectClient/SimConnectManager.cpp
+    SOURCES Systems/QTBridge/SimConnectBridge.hpp Systems/QTBridge/SimConnectBridge.cpp
+    SOURCES Systems/Logger/Logger.hpp Systems/Logger/Logger.cpp
 )
 
 qt_add_resources(appFSRecorder imageresources
@@ -49,12 +55,20 @@ set_target_properties(appFSRecorder PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+target_link_directories(appFSRecorder
+    PRIVATE ${SIMCONNECT_PATH}\\lib
+)
+
 target_link_libraries(appFSRecorder
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick SimConnect
 )
 
 target_include_directories(appFSRecorder
-    PRIVATE Systems/Recording
+    PRIVATE Systems/Recording ${SIMCONNECT_PATH}\\include Systems/SimConnectClient Systems/QTBridge Systems/Logger
+)
+
+target_compile_definitions(appFSRecorder
+    PRIVATE WIN32_LEAN_AND_MEAN
 )
 
 include(GNUInstallDirs)

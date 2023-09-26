@@ -4,7 +4,7 @@ Item {
     id: statusMessage
 
     Text {
-        text: recordingController.status
+        text: "TEST";
         color: "red"
         font.pixelSize: 32
         anchors.centerIn: parent

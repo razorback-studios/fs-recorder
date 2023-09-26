@@ -8,13 +8,14 @@ Item {
         id: stopButton
         width: 100
         height: 100
-        color: "white"
+        color:  simConnectController.isRecording ? "white" : "#9e9e9e"
         anchors.centerIn: parent
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                recordingController.handleRecordStop()
+                //If recording, stop recording else do nothing
+                simConnectController.isRecording ? simConnectController.StopRecording() : null
             }
         }
     }

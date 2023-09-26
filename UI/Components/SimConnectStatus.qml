@@ -11,4 +11,18 @@ Item {
 
         anchors.centerIn: parent
     }
+
+    Rectangle {
+        id: statusCircle
+        color: simConnectController.isConnected ? "green" : "red"
+        height: 30
+        width: 30
+        radius: width/2
+
+        anchors {
+            left: connectedStatusText.right
+            leftMargin: 10
+            verticalCenter: connectedStatusText.verticalCenter
+        }
+    }
 }

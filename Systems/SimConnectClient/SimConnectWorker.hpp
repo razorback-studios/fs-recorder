@@ -2,6 +2,7 @@
 
 #include "SimConnectManager.hpp"
 #include "../Logger/Logger.hpp"
+#include "../FileHandler/CSVHandler.hpp"
 #include <SimConnect.h>
 #include <chrono>
 #include <Windows.h>
@@ -12,6 +13,7 @@
 #include <filesystem>
 #include <mutex>
 #include <memory>
+#include <utility>
 
 struct dataTypes
 {

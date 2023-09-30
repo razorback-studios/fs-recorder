@@ -6,15 +6,15 @@ SimConnectWorker::SimConnectWorker()
     //Instance of logger
     Logger& logger = Logger::Instance();
 
-    m_csv.open("tmp.csv", std::ios_base::trunc);
-    if(m_csv.is_open())
-    {
-        m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
-    }
-    else
-    {
-        logger.Log("Failed to open CSV");
-    }
+    // m_csv.open("tmp.csv", std::ios_base::trunc);
+    // if(m_csv.is_open())
+    // {
+    //     m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
+    // }
+    // else
+    // {
+    //     logger.Log("Failed to open CSV");
+    // }
 
     logger.Log("SimConnectWorker Created");
 }
@@ -78,6 +78,12 @@ bool SimConnectWorker::SaveCSV(const std::string& destFolder, const std::string&
 
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
+
+    #include "../FileHandler/CSVHandler.hpp"
+
+    //Instance of file handler
+    CSVHandler& csvHandler = CSVHandler::Instance();
+
     std::shared_ptr<SimConnectWorker> worker = reinterpret_cast<std::weak_ptr<SimConnectWorker>*>(pContext)->lock();
     
     HRESULT hr;
@@ -99,7 +105,10 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                     auto count = std::chrono::duration_cast<std::chrono::microseconds>(current - worker->start).count();
 
                     //Log to csv
-                    worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
+                    //worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
+                    
+                    //Write to CSV
+                    csvHandler.WriteCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
 
                     break;
 

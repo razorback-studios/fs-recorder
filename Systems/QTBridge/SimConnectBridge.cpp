@@ -116,24 +116,20 @@ void SimConnectBridge::StopRecording()
 void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile, const QString& fileName)
 {
     Logger& logger = Logger::Instance();
-    logger.Log("SaveCSV Called");
+    logger.Log("SaveFile Called");
 
-    CSVHandler& csvHandler = CSVHandler::Instance();
+    CustomFileHandler& CustomFileHandler = CustomFileHandler::Instance();
 
     std::string destFolderStr = destFolder.toStdString();
     std::string tmpFileStr = tmpFile.toStdString();
     std::string fileNameStr = fileName.toStdString();
 
-    logger.Log("destFolder: " + destFolderStr);
-    logger.Log("tmpFile: " + tmpFileStr);
-    logger.Log("fileName: " + fileNameStr);
-
-    if(csvHandler.SaveCSV(destFolderStr, tmpFileStr, fileNameStr))
+    if(CustomFileHandler.SaveFile(destFolderStr, tmpFileStr, fileNameStr))
     {
-        logger.Log("CSV Saved");
+        logger.Log("File Saved");
     }
     else
     {
-        logger.Log("CSV Failed to Save");
+        logger.Log("File Failed to Save");
     }
 }

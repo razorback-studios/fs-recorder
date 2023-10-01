@@ -13,7 +13,7 @@ CustomFileHandler::CustomFileHandler()
     logger.Log("Custom File Handler Created");
 
     //Open CSV
-    m_file.open("tmp.frc", std::ios::binary | std::ios::out | std::ios::trunc);
+    m_file.open("data.frc", std::ios::binary | std::ios::out | std::ios::trunc);
 
     if(!m_file.is_open())
     {
@@ -34,7 +34,7 @@ CustomFileHandler::~CustomFileHandler()
     m_file.close();
 
     //Remove the temp file
-    std::remove("tmp.frc");
+    std::remove("data.frc");
 }
 
 void CustomFileHandler::ClearTmp()
@@ -70,4 +70,52 @@ void CustomFileHandler::WriteFile(const dataTypes& data)
     //Write to file
     m_file.write(reinterpret_cast<const char*>(&data), sizeof(dataTypes));
     m_file << "\n";
+}
+
+bool CustomFileHandler::SaveFile(std::string destFolder, std::string tmpFile, std::string fileName)
+{
+    //if file is open, close it
+    if(m_file.is_open())
+    {
+        m_file.close();
+    }
+
+    Logger& logger = Logger::Instance();
+
+    std::filesystem::path destPath(destFolder);
+    destPath /= fileName;
+
+    logger.Log("tmp file path: " + tmpFile);
+
+    if(!std::filesystem::exists(tmpFile))
+    {
+        logger.Log("Tmp file does not exist");
+        return false;
+    }
+
+    //Open files
+    std::ifstream tmp(tmpFile, std::ios::binary);
+    std::ofstream dest(destPath, std::ios::binary);
+
+    if(tmp && dest)
+    {
+        dest << tmp.rdbuf();
+    }
+    else
+    {
+        logger.Log("Failed to open tmp or destination file");
+        return false;
+    }
+
+    //Close files
+    tmp.close();
+    dest.close();
+
+    if(!std::filesystem::exists(destPath))
+    {
+        logger.Log("Destination file does not exist");
+        return false;
+    }
+
+    return true;
 }

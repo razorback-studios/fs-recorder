@@ -14,7 +14,7 @@ public:
         static CustomFileHandler& Instance();
         void WriteFile(const dataTypes& data);
         void ClearTmp();
-        // bool SaveFile(const std::string destFolder, const std::string tmpFile, const std::string fileName);
+        bool SaveFile(const std::string destFolder, const std::string tmpFile, const std::string fileName);
 
 private:
         CustomFileHandler();

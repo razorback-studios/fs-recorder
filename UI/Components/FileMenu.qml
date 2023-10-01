@@ -19,7 +19,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                simConnectController.SaveCSV("C:\\Users\\w_can\\OneDrive\\Desktop\\test", "tmp.csv", "test.csv");
+                simConnectController.SaveCSV("C:\\Users\\w_can\\OneDrive\\Desktop\\test", "data.frc", "test.frc");
             }
         }
 

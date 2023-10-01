@@ -51,6 +51,7 @@ void SimConnectBridge::TryConnection()
     {
         logger.Log("Bridge found MSFS Connection");
         SetIsConnected(true);
+        m_timer->stop();
     }
     else if (!manager.ConnectToSim() && m_isConnected == true) 
     {
@@ -70,12 +71,20 @@ void SimConnectBridge::TryConnection()
 void SimConnectBridge::StartRecording()
 {
     Logger& logger = Logger::Instance();
+    CSVHandler& csvHandler = CSVHandler::Instance();
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
 
     if(m_isConnected && !m_isRecording) //If recording is being started
     {
-        logger.Log("Recording Begun.");
+        m_worker->SetQuit(false);
         SetIsRecording(true);
+
+        csvHandler.ClearTmp();
+        customFileHandler.ClearTmp();
+        
         m_workerThread = std::thread([this] {m_worker->dataRequest(); });
+        logger.Log("Recording Begun.");
+
 
     }
     else //If we are not connected
@@ -109,6 +118,8 @@ void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile
     Logger& logger = Logger::Instance();
     logger.Log("SaveCSV Called");
 
+    CSVHandler& csvHandler = CSVHandler::Instance();
+
     std::string destFolderStr = destFolder.toStdString();
     std::string tmpFileStr = tmpFile.toStdString();
     std::string fileNameStr = fileName.toStdString();
@@ -117,7 +128,7 @@ void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile
     logger.Log("tmpFile: " + tmpFileStr);
     logger.Log("fileName: " + fileNameStr);
 
-    if(m_worker->SaveCSV(destFolderStr, tmpFileStr, fileNameStr))
+    if(csvHandler.SaveCSV(destFolderStr, tmpFileStr, fileNameStr))
     {
         logger.Log("CSV Saved");
     }

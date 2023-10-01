@@ -5,17 +5,6 @@ SimConnectWorker::SimConnectWorker()
 {
     //Instance of logger
     Logger& logger = Logger::Instance();
-
-    // m_csv.open("tmp.csv", std::ios_base::trunc);
-    // if(m_csv.is_open())
-    // {
-    //     m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
-    // }
-    // else
-    // {
-    //     logger.Log("Failed to open CSV");
-    // }
-
     logger.Log("SimConnectWorker Created");
 }
 
@@ -38,51 +27,15 @@ void SimConnectWorker::WriteToCSV(std::string data)
     m_csv << data << std::endl;
 }
 
-bool SimConnectWorker::SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName)
-{
-    std::filesystem::path destPath(destFolder);
-    destPath /= fileName;
-
-    //Open tmp file
-    std::ifstream tmp(tmpFile, std::ios::binary);
-    if(!tmp.is_open())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to open tmp file");
-        return false;
-    }
-
-    //Open destination file
-    std::ofstream dest(destPath, std::ios::binary);
-    if(!dest.is_open())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to open destination file");
-        return false;
-    }
-
-    //Copy tmp file to destination file
-    dest << tmp.rdbuf();
-
-    //Check for error
-    if(!dest.good() || !tmp.good())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to copy tmp file to destination file");
-        return false;
-    }
-
-    return true;
-
-}
-
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
 
     #include "../FileHandler/CSVHandler.hpp"
+    #include  "../FileHandler/CustomFileHandler.hpp"
 
     //Instance of file handler
     CSVHandler& csvHandler = CSVHandler::Instance();
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
 
     std::shared_ptr<SimConnectWorker> worker = reinterpret_cast<std::weak_ptr<SimConnectWorker>*>(pContext)->lock();
     
@@ -108,6 +61,7 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                     //worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
                     
                     //Write to CSV
+                    customFileHandler.WriteFile(*ps);
                     csvHandler.WriteCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
 
                     break;
@@ -165,9 +119,12 @@ void SimConnectWorker::dataRequest()
 
         while (!m_quit)
         {
+            logger.Log("Start");
             hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_ONCE, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 
             
+
+
             if(manager.GetHandle() == NULL)
             {
                 logger.Log("Handle is NULL");
@@ -176,7 +133,9 @@ void SimConnectWorker::dataRequest()
 
             SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, &m_self);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            logger.Log("End");
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
 
         return;

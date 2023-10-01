@@ -5,6 +5,8 @@
 #include "../SimConnectClient/SimConnectManager.hpp"
 #include "../SimConnectClient/SimConnectWorker.hpp"
 #include "../Logger/Logger.hpp"
+#include "../FileHandler/CSVHandler.hpp"
+#include "../FileHandler/CustomFileHandler.hpp"
 
 class SimConnectBridge : public QObject
 {

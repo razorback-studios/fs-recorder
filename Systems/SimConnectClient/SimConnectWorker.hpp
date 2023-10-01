@@ -3,6 +3,7 @@
 #include "SimConnectManager.hpp"
 #include "../Logger/Logger.hpp"
 #include "../FileHandler/CSVHandler.hpp"
+#include "../FileHandler/CustomFileHandler.hpp"
 #include <SimConnect.h>
 #include <chrono>
 #include <Windows.h>
@@ -15,6 +16,7 @@
 #include <memory>
 #include <utility>
 
+#pragma pack(push, 1)
 struct dataTypes
 {
     //Values we need: time/lat/long/pitch/bank/heading
@@ -29,13 +31,14 @@ struct dataTypes
     float velocityY;
     float velocityX;
 };
+#pragma pack(pop)
 
-static enum DATA_DEFINE_ID
+enum DATA_DEFINE_ID
 {
     DEFINITION_1,
 };
 
-static enum DATA_REQUEST_ID
+enum DATA_REQUEST_ID
 {
     REQUEST_1,
     REQUEST_2,

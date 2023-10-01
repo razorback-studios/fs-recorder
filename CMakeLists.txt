@@ -38,6 +38,7 @@ qt_add_qml_module(appFSRecorder
     SOURCES Systems/QTBridge/SimConnectBridge.hpp Systems/QTBridge/SimConnectBridge.cpp
     SOURCES Systems/Logger/Logger.hpp Systems/Logger/Logger.cpp
     SOURCES Systems/FileHandler/CSVHandler.hpp Systems/FileHandler/CSVHandler.cpp
+    SOURCES Systems/FileHandler/CustomFileHandler.hpp Systems/FileHandler/CustomFileHandler.cpp
 )
 
 qt_add_resources(appFSRecorder imageresources

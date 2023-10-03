@@ -70,7 +70,6 @@ void CustomFileHandler::WriteFile(const dataTypes& data)
 
     //Write to file
     m_file.write(reinterpret_cast<const char*>(&data), sizeof(dataTypes));
-    m_file << "\n";
 }
 
 bool CustomFileHandler::SaveFile(std::string destFolder, std::string tmpFile, std::string fileName)
@@ -119,31 +118,12 @@ bool CustomFileHandler::SaveFile(std::string destFolder, std::string tmpFile, st
     return true;
 }
 
-//bool CustomFileHandler::ReadNextLine(dataTypes& data, std::ifstream file)
+// bool CustomFileHandler::ReadNextLine(dataTypes& data, std::ifstream& readFile)
 // {
 //     std::lock_guard<std::mutex> lock(file_mtx);
 //     Logger& logger = Logger::Instance();
 
-//     m_readFile.open(readFile, std::ios::binary | std::ios::in);
+//     //Save the file to m_file
+//     m_readFile = readFile;
 
-//     if(!m_readFile.read(reinterpret_cast<char*>(&data), sizeof(dataTypes)))
-//     {
-//         if(m_readFile.eof())
-//         {
-//             logger.Log("Reached end of file");
-//             m_readFile.close();
-//             return false;
-//         }
-//         else
-//         {
-//             logger.Log("Failed to read from binary file");
-//             m_readFile.close();
-//             return false;
-//         }
-//     }
-
-//     //Log data
-//     logger.Log("Alititude: " + std::to_string(data.altitude));
-
-//     return true;
-//}
+// }

@@ -66,4 +66,5 @@ private:
     std::atomic<bool> m_quit{ false };
     std::weak_ptr<SimConnectWorker> m_self;
     std::vector<std::ifstream> m_readFiles;
+    bool readNextLine(dataTypes& data, std::ifstream& file);
 };

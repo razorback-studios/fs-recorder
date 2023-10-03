@@ -15,7 +15,7 @@ public:
         void WriteFile(const dataTypes& data);
         void ClearTmp();
         bool SaveFile(const std::string destFolder, const std::string tmpFile, const std::string fileName);
-        bool ReadNextLine(dataTypes& data, std::ifstream file);
+        //bool ReadNextLine(dataTypes& data, std::ifstream& readFile);
 
 private:
         CustomFileHandler();

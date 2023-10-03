@@ -123,13 +123,10 @@ void SimConnectWorker::dataRequest()
 
         start = std::chrono::high_resolution_clock::now();
 
+        logger.Log("Start recording loop.");
         while (!m_quit)
         {
-            logger.Log("Start");
             hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_ONCE, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-
-            
-
 
             if(manager.GetHandle() == NULL)
             {
@@ -139,10 +136,10 @@ void SimConnectWorker::dataRequest()
 
             SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, &m_self);
 
-            logger.Log("End");
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
+
+        logger.Log("End recording loop.");
 
         return;
     }
@@ -168,7 +165,7 @@ void SimConnectWorker::StageFiles(const std::vector<std::string>& files)
         }
         else
         {
-            m_readFiles.push_back(std::move(tmpfile));
+            m_readFiles.emplace_back(std::move(tmpfile));
             logger.Log("Opened file: " + file);
         }
     }
@@ -186,6 +183,9 @@ void SimConnectWorker::Replay()
     //Instance of file handler
     CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
 
+    //Instance of dataTypes
+    dataTypes data;
+
     //For each file in the vector, open it
     for(auto& file : m_readFiles)
     {
@@ -194,9 +194,36 @@ void SimConnectWorker::Replay()
         {
             logger.Log("Failed to open file");
         }
+
+        //Read the file
+        while(readNextLine(data, file))
+        {
+            logger.Log("Altitude: " + std::to_string(data.altitude));
+        }
+
+    }
+}
+
+bool SimConnectWorker::readNextLine(dataTypes& data, std::ifstream& file)
+{
+    //Logger
+    Logger& logger = Logger::Instance();
+
+    if(!file.read(reinterpret_cast<char*>(&data), sizeof(dataTypes)))
+    {
+        if(file.eof())
+        {
+            //End of file reached
+            return false;
+        }
         else
         {
-            logger.Log("Opened file");
+            //Other error
+            logger.Log("Error reading file");
+            return false;
         }
     }
+    //Read was successful
+    return true;
+
 }

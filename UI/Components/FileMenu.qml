@@ -19,7 +19,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                simConnectController.SaveCSV("C:\\Users\\w_can\\OneDrive\\Desktop\\test", "data.frc", "test.frc");
+                simConnectController.SaveCSV("C:\\Users\\w_can\\OneDrive\\Desktop\\Test", "data.frc", "test.frc");
             }
         }
 
@@ -43,6 +43,13 @@ Item {
         border.color: "#FF0101"
         border.width: 1
         anchors.centerIn: parent
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                simConnectController.StageFiles();
+            }
+        }
 
         Text {
             id: centerBlockText

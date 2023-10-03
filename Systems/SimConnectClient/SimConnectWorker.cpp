@@ -19,6 +19,12 @@ SimConnectWorker::~SimConnectWorker()
 
     //Remove the temp file
     std::remove("tmp.csv");
+
+    // //Close the read file if they are open
+    // for(auto& file : m_readFiles)
+    // {
+    //     file.close();
+    // }
 }
 
 void SimConnectWorker::WriteToCSV(std::string data)
@@ -143,5 +149,54 @@ void SimConnectWorker::dataRequest()
     else
     {
         logger.Log("Failed to Connect to MSFS");
+    }
+}
+
+void SimConnectWorker::StageFiles(const std::vector<std::string>& files)
+{
+    //Instance Logger
+    Logger& logger = Logger::Instance();
+
+    //Push each file into the vector to be read
+    for(const auto& file : files)
+    {
+        //Open the file and push it into the vector
+        std::ifstream tmpfile(file, std::ios::binary);
+        if(!tmpfile)
+        {
+            logger.Log("Failed to open file: " + file);
+        }
+        else
+        {
+            m_readFiles.push_back(std::move(tmpfile));
+            logger.Log("Opened file: " + file);
+        }
+    }
+
+    logger.Log("Files: " + std::to_string(m_readFiles.size()) + " Staged");
+
+}
+
+void SimConnectWorker::Replay()
+{
+    //Instance of logger
+    Logger& logger = Logger::Instance();
+    logger.Log("Replay Started");
+
+    //Instance of file handler
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
+
+    //For each file in the vector, open it
+    for(auto& file : m_readFiles)
+    {
+        //Open the file
+        if(!file.is_open())
+        {
+            logger.Log("Failed to open file");
+        }
+        else
+        {
+            logger.Log("Opened file");
+        }
     }
 }

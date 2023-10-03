@@ -29,6 +29,8 @@ public slots:
     void StartRecording();
     void StopRecording();
     void SaveCSV(const QString& destFolder, const QString& tmpFile, const QString& fileName);
+    void StageFiles();
+    void StartReplay();
 
 signals:
     void connectionChanged();

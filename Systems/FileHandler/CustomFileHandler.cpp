@@ -32,6 +32,7 @@ CustomFileHandler::~CustomFileHandler()
 
     //Close CSV
     m_file.close();
+    m_readFile.close();
 
     //Remove the temp file
     std::remove("data.frc");
@@ -85,8 +86,6 @@ bool CustomFileHandler::SaveFile(std::string destFolder, std::string tmpFile, st
     std::filesystem::path destPath(destFolder);
     destPath /= fileName;
 
-    logger.Log("tmp file path: " + tmpFile);
-
     if(!std::filesystem::exists(tmpFile))
     {
         logger.Log("Tmp file does not exist");
@@ -119,3 +118,32 @@ bool CustomFileHandler::SaveFile(std::string destFolder, std::string tmpFile, st
 
     return true;
 }
+
+//bool CustomFileHandler::ReadNextLine(dataTypes& data, std::ifstream file)
+// {
+//     std::lock_guard<std::mutex> lock(file_mtx);
+//     Logger& logger = Logger::Instance();
+
+//     m_readFile.open(readFile, std::ios::binary | std::ios::in);
+
+//     if(!m_readFile.read(reinterpret_cast<char*>(&data), sizeof(dataTypes)))
+//     {
+//         if(m_readFile.eof())
+//         {
+//             logger.Log("Reached end of file");
+//             m_readFile.close();
+//             return false;
+//         }
+//         else
+//         {
+//             logger.Log("Failed to read from binary file");
+//             m_readFile.close();
+//             return false;
+//         }
+//     }
+
+//     //Log data
+//     logger.Log("Alititude: " + std::to_string(data.altitude));
+
+//     return true;
+//}

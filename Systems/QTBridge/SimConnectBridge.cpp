@@ -133,3 +133,26 @@ void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile
         logger.Log("File Failed to Save");
     }
 }
+
+void SimConnectBridge::StageFiles()
+{
+    Logger& logger = Logger::Instance();
+    logger.Log("StageFiles Called");
+
+    //Create new temp vector
+    std::vector<std::string> filesToOpen;
+
+    //Add a file
+    filesToOpen.push_back("C:\\Users\\w_can\\OneDrive\\Desktop\\Test\\test.frc");
+
+    //Call the worker to stage the files
+    m_worker->StageFiles(filesToOpen);
+}
+
+void SimConnectBridge::StartReplay()
+{
+    Logger& logger = Logger::Instance();
+    logger.Log("StartReplay Called");
+
+    m_worker->Replay();
+}

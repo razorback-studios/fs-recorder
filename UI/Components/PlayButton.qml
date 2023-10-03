@@ -9,6 +9,14 @@ Item {
         height: 99
         width: 88
         anchors.centerIn: parent
+
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onClicked: {
+                simConnectController.StartReplay()
+        }
+    }
     }   
 
     Text {

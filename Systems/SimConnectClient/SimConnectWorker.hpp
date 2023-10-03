@@ -55,9 +55,8 @@ public:
     void SetQuit(bool value) { m_quit = value; }
     void SetSelf(std::weak_ptr<SimConnectWorker> self) { m_self = self; }
     std::chrono::high_resolution_clock::time_point start;
-
-    //Save CSV funciton, that gets the file and location
-    bool SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName);
+    void StageFiles(const std::vector<std::string>& files);
+    void Replay();
     std::mutex csv_mtx;
 
 private:
@@ -66,4 +65,5 @@ private:
     std::ofstream m_csv;
     std::atomic<bool> m_quit{ false };
     std::weak_ptr<SimConnectWorker> m_self;
+    std::vector<std::ifstream> m_readFiles;
 };

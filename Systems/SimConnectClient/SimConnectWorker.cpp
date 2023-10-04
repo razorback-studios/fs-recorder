@@ -5,17 +5,6 @@ SimConnectWorker::SimConnectWorker()
 {
     //Instance of logger
     Logger& logger = Logger::Instance();
-
-    m_csv.open("tmp.csv", std::ios_base::trunc);
-    if(m_csv.is_open())
-    {
-        m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
-    }
-    else
-    {
-        logger.Log("Failed to open CSV");
-    }
-
     logger.Log("SimConnectWorker Created");
 }
 
@@ -30,6 +19,12 @@ SimConnectWorker::~SimConnectWorker()
 
     //Remove the temp file
     std::remove("tmp.csv");
+
+    // //Close the read file if they are open
+    // for(auto& file : m_readFiles)
+    // {
+    //     file.close();
+    // }
 }
 
 void SimConnectWorker::WriteToCSV(std::string data)
@@ -38,46 +33,16 @@ void SimConnectWorker::WriteToCSV(std::string data)
     m_csv << data << std::endl;
 }
 
-bool SimConnectWorker::SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName)
-{
-    std::filesystem::path destPath(destFolder);
-    destPath /= fileName;
-
-    //Open tmp file
-    std::ifstream tmp(tmpFile, std::ios::binary);
-    if(!tmp.is_open())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to open tmp file");
-        return false;
-    }
-
-    //Open destination file
-    std::ofstream dest(destPath, std::ios::binary);
-    if(!dest.is_open())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to open destination file");
-        return false;
-    }
-
-    //Copy tmp file to destination file
-    dest << tmp.rdbuf();
-
-    //Check for error
-    if(!dest.good() || !tmp.good())
-    {
-        Logger& logger = Logger::Instance();
-        logger.Log("Failed to copy tmp file to destination file");
-        return false;
-    }
-
-    return true;
-
-}
-
 void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
+
+    #include "../FileHandler/CSVHandler.hpp"
+    #include  "../FileHandler/CustomFileHandler.hpp"
+
+    //Instance of file handler
+    CSVHandler& csvHandler = CSVHandler::Instance();
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
+
     std::shared_ptr<SimConnectWorker> worker = reinterpret_cast<std::weak_ptr<SimConnectWorker>*>(pContext)->lock();
     
     HRESULT hr;
@@ -99,7 +64,11 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                     auto count = std::chrono::duration_cast<std::chrono::microseconds>(current - worker->start).count();
 
                     //Log to csv
-                    worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
+                    //worker->WriteToCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
+                    
+                    //Write to CSV
+                    customFileHandler.WriteFile(*ps);
+                    csvHandler.WriteCSV(std::to_string(count) + "," + std::string(ps->title) + "," + std::to_string(ps->altitude) + "," + std::to_string(ps->latitude) + "," + std::to_string(ps->longitude) + "," + std::to_string(ps->pitch) + "," + std::to_string(ps->bank) + "," + std::to_string(ps->heading) + "," + std::to_string(ps->velocityZ) + "," + std::to_string(ps->velocityY) + "," + std::to_string(ps->velocityX));
 
                     break;
 
@@ -154,11 +123,11 @@ void SimConnectWorker::dataRequest()
 
         start = std::chrono::high_resolution_clock::now();
 
+        logger.Log("Start recording loop.");
         while (!m_quit)
         {
             hr = SimConnect_RequestDataOnSimObject(manager.GetHandle(), REQUEST_1, DEFINITION_1, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_ONCE, SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 
-            
             if(manager.GetHandle() == NULL)
             {
                 logger.Log("Handle is NULL");
@@ -167,8 +136,10 @@ void SimConnectWorker::dataRequest()
 
             SimConnect_CallDispatch(manager.GetHandle(), MyDispatchProc1, &m_self);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
+
+        logger.Log("End recording loop.");
 
         return;
     }
@@ -176,4 +147,83 @@ void SimConnectWorker::dataRequest()
     {
         logger.Log("Failed to Connect to MSFS");
     }
+}
+
+void SimConnectWorker::StageFiles(const std::vector<std::string>& files)
+{
+    //Instance Logger
+    Logger& logger = Logger::Instance();
+
+    //Push each file into the vector to be read
+    for(const auto& file : files)
+    {
+        //Open the file and push it into the vector
+        std::ifstream tmpfile(file, std::ios::binary);
+        if(!tmpfile)
+        {
+            logger.Log("Failed to open file: " + file);
+        }
+        else
+        {
+            m_readFiles.emplace_back(std::move(tmpfile));
+            logger.Log("Opened file: " + file);
+        }
+    }
+
+    logger.Log("Files: " + std::to_string(m_readFiles.size()) + " Staged");
+
+}
+
+void SimConnectWorker::Replay()
+{
+    //Instance of logger
+    Logger& logger = Logger::Instance();
+    logger.Log("Replay Started");
+
+    //Instance of file handler
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
+
+    //Instance of dataTypes
+    dataTypes data;
+
+    //For each file in the vector, open it
+    for(auto& file : m_readFiles)
+    {
+        //Open the file
+        if(!file.is_open())
+        {
+            logger.Log("Failed to open file");
+        }
+
+        //Read the file
+        while(readNextLine(data, file))
+        {
+            logger.Log("Altitude: " + std::to_string(data.altitude));
+        }
+
+    }
+}
+
+bool SimConnectWorker::readNextLine(dataTypes& data, std::ifstream& file)
+{
+    //Logger
+    Logger& logger = Logger::Instance();
+
+    if(!file.read(reinterpret_cast<char*>(&data), sizeof(dataTypes)))
+    {
+        if(file.eof())
+        {
+            //End of file reached
+            return false;
+        }
+        else
+        {
+            //Other error
+            logger.Log("Error reading file");
+            return false;
+        }
+    }
+    //Read was successful
+    return true;
+
 }

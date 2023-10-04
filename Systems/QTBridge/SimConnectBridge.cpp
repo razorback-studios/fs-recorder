@@ -51,6 +51,7 @@ void SimConnectBridge::TryConnection()
     {
         logger.Log("Bridge found MSFS Connection");
         SetIsConnected(true);
+        m_timer->stop();
     }
     else if (!manager.ConnectToSim() && m_isConnected == true) 
     {
@@ -70,12 +71,20 @@ void SimConnectBridge::TryConnection()
 void SimConnectBridge::StartRecording()
 {
     Logger& logger = Logger::Instance();
+    CSVHandler& csvHandler = CSVHandler::Instance();
+    CustomFileHandler& customFileHandler = CustomFileHandler::Instance();
 
     if(m_isConnected && !m_isRecording) //If recording is being started
     {
-        logger.Log("Recording Begun.");
+        m_worker->SetQuit(false);
         SetIsRecording(true);
+
+        csvHandler.ClearTmp();
+        customFileHandler.ClearTmp();
+        
         m_workerThread = std::thread([this] {m_worker->dataRequest(); });
+        logger.Log("Recording Begun.");
+
 
     }
     else //If we are not connected
@@ -107,22 +116,43 @@ void SimConnectBridge::StopRecording()
 void SimConnectBridge::SaveCSV(const QString& destFolder, const QString& tmpFile, const QString& fileName)
 {
     Logger& logger = Logger::Instance();
-    logger.Log("SaveCSV Called");
+    logger.Log("SaveFile Called");
+
+    CustomFileHandler& CustomFileHandler = CustomFileHandler::Instance();
 
     std::string destFolderStr = destFolder.toStdString();
     std::string tmpFileStr = tmpFile.toStdString();
     std::string fileNameStr = fileName.toStdString();
 
-    logger.Log("destFolder: " + destFolderStr);
-    logger.Log("tmpFile: " + tmpFileStr);
-    logger.Log("fileName: " + fileNameStr);
-
-    if(m_worker->SaveCSV(destFolderStr, tmpFileStr, fileNameStr))
+    if(CustomFileHandler.SaveFile(destFolderStr, tmpFileStr, fileNameStr))
     {
-        logger.Log("CSV Saved");
+        logger.Log("File Saved");
     }
     else
     {
-        logger.Log("CSV Failed to Save");
+        logger.Log("File Failed to Save");
     }
+}
+
+void SimConnectBridge::StageFiles()
+{
+    Logger& logger = Logger::Instance();
+    logger.Log("StageFiles Called");
+
+    //Create new temp vector
+    std::vector<std::string> filesToOpen;
+
+    //Add a file
+    filesToOpen.push_back("C:\\Users\\w_can\\OneDrive\\Desktop\\Test\\test.frc");
+
+    //Call the worker to stage the files
+    m_worker->StageFiles(filesToOpen);
+}
+
+void SimConnectBridge::StartReplay()
+{
+    Logger& logger = Logger::Instance();
+    logger.Log("StartReplay Called");
+
+    m_worker->Replay();
 }

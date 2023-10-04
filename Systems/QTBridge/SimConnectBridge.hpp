@@ -5,6 +5,8 @@
 #include "../SimConnectClient/SimConnectManager.hpp"
 #include "../SimConnectClient/SimConnectWorker.hpp"
 #include "../Logger/Logger.hpp"
+#include "../FileHandler/CSVHandler.hpp"
+#include "../FileHandler/CustomFileHandler.hpp"
 
 class SimConnectBridge : public QObject
 {
@@ -27,6 +29,8 @@ public slots:
     void StartRecording();
     void StopRecording();
     void SaveCSV(const QString& destFolder, const QString& tmpFile, const QString& fileName);
+    void StageFiles();
+    void StartReplay();
 
 signals:
     void connectionChanged();

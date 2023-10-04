@@ -37,6 +37,8 @@ qt_add_qml_module(appFSRecorder
     SOURCES Systems/SimConnectClient/SimConnectManager.hpp Systems/SimConnectClient/SimConnectManager.cpp
     SOURCES Systems/QTBridge/SimConnectBridge.hpp Systems/QTBridge/SimConnectBridge.cpp
     SOURCES Systems/Logger/Logger.hpp Systems/Logger/Logger.cpp
+    SOURCES Systems/FileHandler/CSVHandler.hpp Systems/FileHandler/CSVHandler.cpp
+    SOURCES Systems/FileHandler/CustomFileHandler.hpp Systems/FileHandler/CustomFileHandler.cpp
 )
 
 qt_add_resources(appFSRecorder imageresources
@@ -64,7 +66,7 @@ target_link_libraries(appFSRecorder
 )
 
 target_include_directories(appFSRecorder
-    PRIVATE Systems/Recording ${SIMCONNECT_PATH}\\include Systems/SimConnectClient Systems/QTBridge Systems/Logger
+    PRIVATE Systems/Recording ${SIMCONNECT_PATH}\\include Systems/SimConnectClient Systems/QTBridge Systems/Logger Systems/FileHandler
 )
 
 target_compile_definitions(appFSRecorder

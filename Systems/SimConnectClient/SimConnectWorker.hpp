@@ -2,6 +2,8 @@
 
 #include "SimConnectManager.hpp"
 #include "../Logger/Logger.hpp"
+#include "../FileHandler/CSVHandler.hpp"
+#include "../FileHandler/CustomFileHandler.hpp"
 #include <SimConnect.h>
 #include <chrono>
 #include <Windows.h>
@@ -12,7 +14,9 @@
 #include <filesystem>
 #include <mutex>
 #include <memory>
+#include <utility>
 
+#pragma pack(push, 1)
 struct dataTypes
 {
     //Values we need: time/lat/long/pitch/bank/heading
@@ -27,13 +31,14 @@ struct dataTypes
     float velocityY;
     float velocityX;
 };
+#pragma pack(pop)
 
-static enum DATA_DEFINE_ID
+enum DATA_DEFINE_ID
 {
     DEFINITION_1,
 };
 
-static enum DATA_REQUEST_ID
+enum DATA_REQUEST_ID
 {
     REQUEST_1,
     REQUEST_2,
@@ -50,9 +55,8 @@ public:
     void SetQuit(bool value) { m_quit = value; }
     void SetSelf(std::weak_ptr<SimConnectWorker> self) { m_self = self; }
     std::chrono::high_resolution_clock::time_point start;
-
-    //Save CSV funciton, that gets the file and location
-    bool SaveCSV(const std::string& destFolder, const std::string& tmpFile, const std::string fileName);
+    void StageFiles(const std::vector<std::string>& files);
+    void Replay();
     std::mutex csv_mtx;
 
 private:
@@ -61,4 +65,6 @@ private:
     std::ofstream m_csv;
     std::atomic<bool> m_quit{ false };
     std::weak_ptr<SimConnectWorker> m_self;
+    std::vector<std::ifstream> m_readFiles;
+    bool readNextLine(dataTypes& data, std::ifstream& file);
 };

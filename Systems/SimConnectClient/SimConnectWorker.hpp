@@ -22,10 +22,10 @@ struct dataTypes
     //Values we need: time/lat/long/pitch/bank/heading
     char title[256];
     double  altitude;
-    float  latitude;
-    float  longitude;
-    float pitch;
-    float bank;
+    double  latitude;
+    double  longitude;
+    double pitch;
+    double bank;
     float heading;
     float velocityZ;
     float velocityY;
@@ -42,6 +42,21 @@ enum DATA_REQUEST_ID
 {
     REQUEST_1,
     REQUEST_2,
+    SYSTEMSTATE,
+};
+
+enum EVENT_ID
+{
+    EVENT_SIM_START,
+};
+
+enum RETURN_VALUE
+{
+    SIM_CONNECTION_FAILED,
+    SIM_STATUS_FAILED,
+    DATA_REQUEST_ERROR,
+    DATA_SUBSCRIBE_ERROR,
+    SUCCESS,
 };
 
 class SimConnectWorker
@@ -49,20 +64,20 @@ class SimConnectWorker
 public:
     SimConnectWorker();
     ~SimConnectWorker();
+
     void dataRequest();
-    int GetQuit() { return m_quit; }
-    void WriteToCSV(std::string data);
-    void SetQuit(bool value) { m_quit = value; }
-    void SetSelf(std::weak_ptr<SimConnectWorker> self) { m_self = self; }
-    std::chrono::high_resolution_clock::time_point start;
+
     void StageFiles(const std::vector<std::string>& files);
     void Replay();
+
+    int GetQuit() { return m_quit; }
+    void SetQuit(bool value) { m_quit = value; }
+    void SetSelf(std::weak_ptr<SimConnectWorker> self) { m_self = self; }
+    
+    std::chrono::high_resolution_clock::time_point start;
     std::mutex csv_mtx;
 
 private:
-    std::ofstream m_file;
-    bool isConnected;
-    std::ofstream m_csv;
     std::atomic<bool> m_quit{ false };
     std::weak_ptr<SimConnectWorker> m_self;
     std::vector<std::ifstream> m_readFiles;

@@ -50,7 +50,7 @@ void CSVHandler::ClearTmp()
     //Write header
     if(m_csv.is_open())
     {
-        m_csv << "Time,Title,Altitude,Latitude,Longitude,Pitch,Bank,Heading,VelocityZ,VelocityY,VelocityX" << std::endl;
+        m_csv << "Time,Title,Altitude,Latitude,Longitude,Heading" << std::endl;
     }
     else
     {

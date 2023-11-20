@@ -21,15 +21,16 @@ struct dataTypes
 {
     //Values we need: time/lat/long/pitch/bank/heading
     char title[256];
-    double  altitude;
     double  latitude;
     double  longitude;
-    double pitch;
-    double bank;
-    float heading;
-    float velocityZ;
-    float velocityY;
-    float velocityX;
+    double  altitude;
+    double heading;
+    // double pitch;
+    // double bank;
+    // float heading;
+    // float velocityZ;
+    // float velocityY;
+    // float velocityX;
 };
 #pragma pack(pop)
 

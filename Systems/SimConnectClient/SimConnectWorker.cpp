@@ -45,9 +45,6 @@ void CALLBACK MyDispatchProc1(SIMCONNECT_RECV* pData, DWORD cbData, void *pConte
                     //Set var to hold time
                     auto current = std::chrono::high_resolution_clock::now();
                     auto count = std::chrono::duration_cast<std::chrono::microseconds>(current - worker->start).count();
-
-                    // //Log the heading
-                    // logger.Log("Heading: " + std::to_string(ps->heading));
                     
                     //Write to CSV
                     customFileHandler.WriteFile(*ps);

@@ -15,6 +15,7 @@
 #include <mutex>
 #include <memory>
 #include <utility>
+#include <future>
 
 #pragma pack(push, 1)
 struct dataTypes
@@ -70,6 +71,7 @@ public:
 
     void StageFiles(const std::vector<std::string>& files);
     void Replay();
+    void SpawnNewAirplane();
 
     int GetQuit() { return m_quit; }
     void SetQuit(bool value) { m_quit = value; }
@@ -82,5 +84,8 @@ private:
     std::atomic<bool> m_quit{ false };
     std::weak_ptr<SimConnectWorker> m_self;
     std::vector<std::ifstream> m_readFiles;
+    std::shared_ptr<SIMCONNECT_DATA_INITPOSITION> m_initPosition;
     bool readNextLine(dataTypes& data, std::ifstream& file);
+    bool setInitData(dataTypes& data, std::ifstream& file);
+    std::string m_aircraftTitle;
 };

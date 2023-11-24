@@ -174,6 +174,8 @@ void SimConnectWorker::Replay()
     //Instance of dataTypes
     dataTypes data;
 
+    m_initPosition = std::make_shared<SIMCONNECT_DATA_INITPOSITION>();
+
     //For each file in the vector, open it
     for(auto& file : m_readFiles)
     {
@@ -183,12 +185,51 @@ void SimConnectWorker::Replay()
             logger.Log("Failed to open file");
         }
 
+        //Set the initial position
+        if(!setInitData(data, file))
+        {
+            logger.Log("Failed to set initial position");
+        }
+
+        logger.Log("Init position" + std::to_string(m_initPosition->Latitude));
+        logger.Log("Title: " + m_aircraftTitle);
+
+        SpawnNewAirplane();
+
         //Read the file while there is still data
         while(readNextLine(data, file))
         {
-            logger.Log("Altitude: " + std::to_string(data.altitude));
+            //logger.Log("Altitude: " + std::to_string(data.altitude));
         }
 
+    }
+}
+
+void SimConnectWorker::SpawnNewAirplane()
+{
+    //Get reference to sim
+    SimConnectManager& manager = SimConnectManager::Instance();
+
+    Logger& logger = Logger::Instance();
+
+    HRESULT hr;
+
+    if(manager.ConnectToSim())
+    {
+        hr = SimConnect_AICreateNonATCAircraft(manager.GetHandle(), m_aircraftTitle.c_str(), "NA", *m_initPosition, REQUEST_2);
+
+        if(FAILED(hr))
+        {
+            logger.Log("Failed to spawn new aircraft");
+        }
+        else
+        {
+            logger.Log("Spawned new aircraft");
+        }
+    }
+    else
+    {
+        logger.Log("Failed to connect to sim");
     }
 }
 
@@ -214,4 +255,43 @@ bool SimConnectWorker::readNextLine(dataTypes& data, std::ifstream& file)
     //Read was successful
     return true;
 
+}
+
+bool SimConnectWorker::setInitData(dataTypes& data, std::ifstream& file)
+{
+    //Logger
+    Logger& logger = Logger::Instance();
+
+
+    if(!file.read(reinterpret_cast<char*>(&data), sizeof(dataTypes)))
+    {
+        if(file.eof())
+        {
+            logger.Log("End of file reached");
+            //End of file reached
+            return false;
+        }
+        else
+        {
+            //Other error
+            logger.Log("Error reading file");
+            return false;
+        }
+    }
+
+    m_initPosition->Latitude = data.latitude;
+    m_initPosition->Longitude = data.longitude;
+    m_initPosition->Altitude = data.altitude;
+    m_initPosition->Heading = data.heading;
+    m_initPosition->Pitch = 0;
+    m_initPosition->Bank = 0;
+    m_initPosition->OnGround = 1;
+    m_initPosition->Airspeed = 0;
+
+    m_aircraftTitle = data.title;
+
+    logger.Log("Title: " + m_aircraftTitle);
+
+    logger.Log("Initial Position Set");
+    return true;
 }
